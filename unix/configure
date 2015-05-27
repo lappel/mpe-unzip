@@ -323,7 +323,7 @@ int main()
 _EOF_
 # compile it
 $CC -o conftest conftest.c >/dev/null 2>/dev/null
-if [ $? -ne 0 ]; then
+if [ $? -ne 0 ] || [ "$(uname)" = "MPE/iX" ]; then
   echo "-- no Unicode (wchar_t) support"
 else
 # have wide char support
@@ -352,7 +352,7 @@ int main()
 }
 _EOF_
 $CC $CFLAGS -c conftest.c >/dev/null 2>/dev/null
-if [ $? -eq 0 ]; then
+if [ $? -eq 0 ] && [ "$(uname)" != "MPE/iX" ]; then
   echo "-- have setlocale, can check for charset type"
   echo "--  - enabling UTF8-native support!"
   CFLAGSR="${CFLAGSR} -DUNICODE_SUPPORT -DUTF8_MAYBE_NATIVE"
@@ -541,6 +541,10 @@ MANDIR=manl
 [ -d /usr/man/manl ]       && MANDIR=/usr/man/manl
 [ -d /usr/local/man/manl ] && MANDIR=/usr/local/man/manl
 [ -d /usr/local/man/man1 ] && MANDIR=/usr/local/man/man1
+
+# allow PREFIX override
+[ -n "$PREFIX" ] && [ "$(uname)" = "MPE/iX" ] && BINDIR=$PREFIX/bin
+[ -n "$PREFIX" ] && [ "$(uname)" = "MPE/iX" ] && MANDIR=$PREFIX/man/man1
 
 echo Checking for OS specialties
 if [ -f /usr/bin/hostinfo ]; then
